@@ -367,4 +367,143 @@ Một entity cần: `@Entity`, `@Id`, constructor không tham số, class không
 ```java
 public interface ProductRepository extends JpaRepository<Product, Long> { }
 ```
+
+## Thực hành
+
+Tạo bảng student ở MySQL
+```sql
+Create table student(
+	id varchar(200) primary key,
+	name varchar(200),
+    gpa decimal(10, 1)
+)
+```
+Tương ứng là class StudentSQl có id là khóa chính.
+```java
+@Entity
+@Table(name = "student")
+public class StudentSql {
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
+    private String name;
+    private double gpa;
+
+    public StudentSql(String name, double gpa) {
+        this.name = name;
+        this.gpa = gpa;
+    }
     
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public double getGpa() {
+        return gpa;
+    }
+
+    public void setGpa(double gpa) {
+        this.gpa = gpa;
+    }
+    
+}
+```
+Annotation:
+- @Entity dùng để đánh dấu class trong java trở thành 1 thực thể trong cơ sở dữ liệu.
+- @Table dùng để chỉ định tên bảng trong cơ sở dữ liệu mà một lớp Java (Entity) ánh xạ tới.
+- @Id dùng để chỉ định thuộc tính nào làm khóa chính.
+- @GeneratedValue dùng để sinh khóa chính tự động
+
+Repository
+```java
+@Repository
+public interface RepositoryStudent extends JpaRepository<StudentSql, String>{   
+}
+```
+### Đẩy dữ liệu vào database
+ 
+Reponsitory.save(data): Lưu dữ liệu vào MySql
+
+vd:
+```java
+    public StudentSql create(RequestStudent request){
+        StudentSql nw = new StudentSql(request.getName(), request.getGpa());
+        return Student.save(nw);
+    }
+```
+```java
+@PostMapping("/new-student-sql")
+    public StudentSql add(@RequestBody RequestStudent RequestStudent){
+        return StudentSqlService.create(RequestStudent);
+    }
+```
+![alt text](image.png)
+Trong MySQL
+![alt text](image-1.png)
+
+### Lấy dữ liệu từ MySql
+
+Repository.findAll() trả về 1 list bản ghi trong database
+
+vd
+```java
+    public ArrayList<StudentSql> get(){
+        ArrayList<StudentSql> arr = (ArrayList<StudentSql>)Student.findAll();
+        return arr;
+    }
+```
+```java
+    // Lay tat ca du lieu trong database
+    @GetMapping("/student-sql")
+    public Object get(){
+        return StudentSqlService.get();
+    }
+    
+```
+![alt text](image-2.png)
+
+### Phân trang 
+
+Page<Object> + Repository.findAll(PageResponse.of(page, size))
+
+vd:
+```java
+        public ResponsePagination pagination(int page, int size){
+        Page<StudentSql> res = Student.findAll(PageRequest.of(page - 1, size));
+        ResponsePagination tmp = new ResponsePagination(res.getContent(),page, size, res.getTotalPages(),(int)res.getTotalElements());
+        return tmp;
+    }
+```
+```java
+@GetMapping("/student-sql-pg")
+    public Object getPagination(@RequestParam int page,@RequestParam int size){
+        return StudentSqlService.pagination(page, size);
+    }
+```
+![alt text](image-3.png)
+
+
+### Relationship giữa các Entity
+
+### Định nghĩa
+
+**Relationship** là cách khai báo mối liên hệ giữa hai entity, tương ứng với **khóa ngoại (foreign key)** giữa hai bảng trong DB.
+
+| Annotation | Ý nghĩa | Ví dụ |
+|---|---|---|
+| `@ManyToOne` | **Nhiều** entity này thuộc về **một** entity kia | Nhiều sinh viên thuộc một lớp |
+| `@OneToMany` | **Một** entity này có **nhiều** entity kia | Một lớp có nhiều sinh viên |
+
+Hai annotation này là **hai mặt của cùng một quan hệ**: nhìn từ sinh viên là `@ManyToOne`, nhìn từ lớp là `@OneToMany`.

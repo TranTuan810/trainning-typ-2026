@@ -1,3 +1,27 @@
+# Controllers
+Controller được sử dụng để xử lý các yêu cầu,  và trả về phản hồi cho client
+
+# Models
+Model là thành phần đại diện cho dữ liệu và cấu trúc logic của đối tượng trong ứng dụng. Đây là các lớp Java thông thường chứa các thuộc tính, cùng các phương thức getter và setter để truy xuất dữ liệu mà không chứa các logic nghiệp vụ phức tạp.
+
+# Routes
+Routes là cơ chế khớp các đường dẫn URL trên trình duyệt với các thành phần, trang hoặc chức năng tương ứng mà không cần phải tải lại toàn bộ trang web, trong Spring boot thường nằm trong Controller
+
+# Services
+
+services là nơi để xử lý logic nghiệp vụ, thường chứa các interface, chứa các class cài đặt interface.
+
+# Migration
+
+Migration là quá trình quản lý, theo dõi và tự động áp dụng các thay đổi về cấu trúc (schema) hoặc dữ liệu của database theo thời gian
+
+## File application.properties
+
+File application.properties là nơi lưu trữ toàn bộ các thiết lập và tham số cấu hình để vận hành ứng dụng như:
+- Cấu hình máy chủ
+- Cấu hình database
+- Cấu hình mồi trường...
+
 # Xây dựng RESTful API
 
 ## HTTP Methods và Mapping URL đến hàm xử lý
@@ -449,9 +473,9 @@ vd:
         return StudentSqlService.create(RequestStudent);
     }
 ```
-![alt text](image.png)
+![alt text](screenshots/image.png)
 Trong MySQL
-![alt text](image-1.png)
+![alt text](screenshots/image-1.png)
 
 ### Lấy dữ liệu từ MySql
 
@@ -472,7 +496,7 @@ vd
     }
     
 ```
-![alt text](image-2.png)
+![alt text](screenshots/image-2.png)
 
 ### Phân trang 
 
@@ -492,7 +516,7 @@ vd:
         return StudentSqlService.pagination(page, size);
     }
 ```
-![alt text](image-3.png)
+![alt text](screenshots/image-3.png)
 
 
 ### Relationship giữa các Entity
